@@ -1,0 +1,16 @@
+/target
+Cargo.lock
+*.exe
+*.msi
+*.pdb
+*.log
+*.7z
+*.zip
+
+# Secrets & local scratch hygiene
+.env*
+!.env.example
+.audit/
+.wt/
+.taste-skill/
+.codex-run/
