@@ -6,7 +6,6 @@ description = "Ultra-lightweight native Rust hardware controller for Xiaomi/Redm
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/braces157/MiControl"
-homepage = "https://github.com/braces157/MiControl"
 keywords = ["xiaomi", "redmi", "windows", "wmi", "hardware"]
 categories = ["os::windows-apis", "hardware-support", "command-line-utilities"]
 

@@ -186,8 +186,10 @@ unsafe fn has_hardware_id(devinst: u32, needle_upper: &str) -> bool {
         return false;
     }
     let utf16: Vec<u16> = raw
-        .chunks_exact(2)
-        .map(|c| u16::from_le_bytes([c[0], c[1]]))
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|&c| u16::from_le_bytes(c))
         .collect();
     for entry in utf16.split(|&c| c == 0) {
         if entry.is_empty() {
