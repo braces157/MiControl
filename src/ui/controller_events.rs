@@ -137,7 +137,6 @@ impl AppController {
         let plugged_in = !was_ac && now_ac;
         self.on_ac = now_ac;
 
-        // Low-battery Keep-Awake safety cutoff (runs on every battery % drop while unplugged, 0% polling).
         if smart_profile::should_cutoff_awake(
             self.cfg.awake_enabled,
             now_ac,
@@ -155,7 +154,6 @@ impl AppController {
             let _ = self.cfg.save();
         }
 
-        // Apply Smart AC/Battery Profile on actual power-source transition.
         if was_ac != now_ac {
             let cur_bright = self.mifs.as_ref().and_then(|m| m.get_display_brightness());
             if let Some(plan) =

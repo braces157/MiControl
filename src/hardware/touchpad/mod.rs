@@ -159,7 +159,6 @@ impl TouchpadManager {
                     EdgeSide::Left => !swap,
                     EdgeSide::Right => swap,
                 };
-                // 3% brightness / 2% volume per discrete gesture step feels crisp and smooth.
                 if is_brightness {
                     pb.fetch_add(d.steps * 3, Ordering::Relaxed);
                 } else {

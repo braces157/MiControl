@@ -361,7 +361,6 @@ fn main() -> ExitCode {
         };
     }
 
-    // Tray GUI mode: enforce single instance (wake existing flyout if already running).
     let Some(_guard) = SingleInstanceGuard::try_acquire() else {
         micontrol::ui::signal_existing_instance();
         return ExitCode::SUCCESS;

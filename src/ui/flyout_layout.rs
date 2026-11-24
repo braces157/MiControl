@@ -80,7 +80,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
         y += 38.0;
     }
 
-    // Section 1: Performance Modes (5 tiles across)
     y += 20.0;
     let modes = [
         PerfMode::Eco,
@@ -118,7 +117,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     }
     y += mode_h + 12.0;
 
-    // Section 2: Battery Charge Care + Travel + 40..80 presets
     y += 20.0;
     let half_w = (inner_w - gap) / 2.0;
     let row_h = 44.0;
@@ -191,11 +189,9 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     }
     y += pill_h + 12.0;
 
-    // Section 3: Smart Profiles + Display Hz + Timed Keep-Awake + Touchpad
     y += 20.0;
     let ctrl_h = 44.0;
 
-    // Row 1: Smart AC/Battery Profile (wide) | Display Hz quick toggle
     let hz_w = 82.0;
     let prof_w = inner_w - hz_w - gap;
     let prof_sub = if s.smart_profiles {
@@ -242,7 +238,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     });
     y += ctrl_h + gap;
 
-    // Row 2: Keep Awake (Amphetamine) | Touchpad Toggle
     tiles.push(ControlTile {
         rect: RectF {
             left: pad,
@@ -287,7 +282,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     });
     y += ctrl_h + gap;
 
-    // Row 2b: Timed Keep-Awake (Amphetamine) duration pills: 30m | 1h | 2h | ∞
     let dur_w = (inner_w - gap * 3.0) / 4.0;
     for (i, dur) in AwakeDuration::PRESETS.into_iter().enumerate() {
         let x = pad + (i as f32) * (dur_w + gap);
@@ -309,7 +303,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     }
     y += pill_h + gap;
 
-    // Row 3: Bottom Dead-Zone | Edge Sliders
     tiles.push(ControlTile {
         rect: RectF {
             left: pad,
@@ -353,7 +346,6 @@ pub fn build_layout(s: &FlyoutSnapshot) -> (f32, Vec<ControlTile>) {
     });
     y += ctrl_h + 12.0;
 
-    // Footer: Start at Login | Exit
     let foot_h = 30.0;
     let exit_w = 72.0;
     let auto_w = inner_w - exit_w - gap;

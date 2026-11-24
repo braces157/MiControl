@@ -278,7 +278,6 @@ mod tests {
         assert!(cfg.awake_enabled);
         assert_eq!(*fake.lid_ac.borrow(), 0);
 
-        // Exiting the app must restore Windows' lid-close action while remembering awake_enabled = true.
         assert!(suspend_for_exit_with(&mut cfg, &fake));
         assert_eq!(*fake.lid_ac.borrow(), 1);
         assert_eq!(cfg.saved_lid_ac, None);

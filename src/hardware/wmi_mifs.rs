@@ -69,7 +69,6 @@ impl Drop for ComGuard {
     }
 }
 
-/// Connect to `ROOT\WMI` with impersonation proxy blanket enabled.
 fn connect_root_wmi() -> WinResult<IWbemServices> {
     // SAFETY: Standard WbemLocator COM activation and ConnectServer to local ROOT\WMI.
     unsafe {
@@ -97,7 +96,6 @@ fn connect_root_wmi() -> WinResult<IWbemServices> {
     }
 }
 
-/// Build a `VARIANT` containing a `VT_ARRAY | VT_UI1` SAFEARRAY from a byte slice.
 fn bytes_to_variant(bytes: &[u8]) -> WinResult<VARIANT> {
     // SAFETY: SafeArrayCreateVector allocates a 1D byte SAFEARRAY; we lock, copy, unlock,
     // and transfer ownership into VARIANT (which calls VariantClear -> SafeArrayDestroy on drop).
@@ -122,7 +120,6 @@ fn bytes_to_variant(bytes: &[u8]) -> WinResult<VARIANT> {
     }
 }
 
-/// Extract bytes from a `VT_ARRAY | VT_UI1` `VARIANT`.
 fn variant_to_bytes(var: &VARIANT) -> Option<Vec<u8>> {
     // SAFETY: We check the exact variant tag (`VT_ARRAY | VT_UI1`) and non-null SAFEARRAY pointer
     // before accessing contiguous element memory and unaccessing before returning.
@@ -150,7 +147,6 @@ fn variant_to_bytes(var: &VARIANT) -> Option<Vec<u8>> {
     }
 }
 
-/// Extract a string property from an `IWbemClassObject`.
 fn get_string_prop(obj: &IWbemClassObject, name: &str) -> Option<String> {
     let wide: Vec<u16> = name.encode_utf16().chain(std::iter::once(0)).collect();
     let mut val = VARIANT::default();
@@ -167,7 +163,6 @@ fn get_string_prop(obj: &IWbemClassObject, name: &str) -> Option<String> {
     }
 }
 
-/// Extract a `u8` / integer property from an `IWbemClassObject`.
 fn get_u8_prop(obj: &IWbemClassObject, name: &str) -> Option<u8> {
     let wide: Vec<u16> = name.encode_utf16().chain(std::iter::once(0)).collect();
     let mut val = VARIANT::default();
@@ -230,7 +225,6 @@ impl MifsClient {
         let instance_path = query_first_relpath(&services, "MICommonInterface")
             .map_err(|e| format!("MICommonInterface instance not found (non-Xiaomi or no admin): {e}"))?;
 
-        // Fetch method input parameter schema once and reuse SpawnInstance on every call.
         // SAFETY: Standard IWbemServices::GetObject + GetMethod on verified class name.
         let in_params_template = unsafe {
             let mut class_obj: Option<IWbemClassObject> = None;
@@ -259,7 +253,6 @@ impl MifsClient {
             dialect: MifsDialect::Unsupported,
         };
 
-        // Detect Classic vs Echo dialect on initial probe (GET 0x08); surface WMI transport errors.
         let probe = protocol::build_get(CMD_PERF, 0, 0);
         let out = client
             .invoke_raw(&probe)
@@ -470,7 +463,6 @@ impl MifsClient {
     }
 }
 
-/// COM Sink receiving asynchronous `HID_EVENT20` push notifications with 0% idle CPU.
 #[implement(IWbemObjectSink)]
 struct HidEventSink {
     on_event: Arc<dyn Fn(HidEvent) + Send + Sync>,
@@ -607,13 +599,11 @@ mod tests {
             let put_res = in_inst.Put(windows_core::w!("InData"), 0, &var_in, 0);
             println!("Put(VT_ARRAY|VT_UI1) result: {put_res:?}");
 
-            // Check roundtrip Get back from in_inst!
             let mut back = VARIANT::default();
             let get_res = in_inst.Get(windows_core::w!("InData"), 0, &mut back, None, None);
             println!("Get back result: {get_res:?}, vt=0x{:x}", (*back.Anonymous.Anonymous).vt.0);
             println!("variant_to_bytes: {:?}", variant_to_bytes(&back).map(|v| v.len()));
 
-            // Also inspect CIMTYPE of InData & OutData!
             let mut cimtype: i32 = 0;
             let _ = in_sig.Get(windows_core::w!("InData"), 0, std::ptr::null_mut(), Some(&mut cimtype), None);
             println!("InData cimtype = 0x{:x}", cimtype);

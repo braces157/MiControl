@@ -170,7 +170,6 @@ impl AppController {
             }
         }
 
-        // 2. Restore saved Performance Mode for current power source if firmware drifted.
         let actual_mode = mifs.get_perf_mode().ok().flatten();
         if let Some(want_mode) = smart_profile::preferred_startup_mode(&self.cfg, self.on_ac)
             && actual_mode != Some(want_mode)

@@ -24,7 +24,6 @@ use windows_core::PCWSTR;
 pub const WM_TRAY_ICON: u32 = WM_APP + 1;
 const TRAY_UID: u32 = 1;
 
-// Context menu command IDs
 pub const CMD_OPEN_FLYOUT: u32 = 1001;
 pub const CMD_MODE_ECO: u32 = 1010;
 pub const CMD_MODE_QUIET: u32 = 1011;
@@ -226,7 +225,6 @@ unsafe fn append_item(
     }
 }
 
-/// Render a crisp High-DPI ARGB squircle tray icon with mode accent glow and optional emerald care dot.
 fn create_badge_icon(accent1: u32, accent2: u32, care_dot: bool) -> Option<HICON> {
     // SAFETY: Standard Win32 metric query; clamp 32..=64 so tray icons stay sharp on 150%-250% DPI.
     let sys_px = unsafe { GetSystemMetrics(SM_CXSMICON) };

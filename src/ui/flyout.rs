@@ -411,7 +411,6 @@ fn paint_flyout(hwnd: HWND, hdc: HDC, inner: &FlyoutInner) {
 
     cv.clear(theme::CANVAS);
 
-    // Header brand squircle logo (mode-tinted) + MiControl title + live hardware badge
     let logo_px = canvas::dip_to_px(22.0, dpi).max(16) as usize;
     let (acc1, acc2) = crate::ui::logo::mode_accent_pair(s.current_mode);
     let logo_buf = crate::ui::logo::render_premul_argb(logo_px, acc1, acc2, false, false);
