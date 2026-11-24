@@ -121,16 +121,13 @@ mod tests {
             travel_mode: false,
             ..Default::default()
         };
-        // Transient 100% must NOT disarm charge care!
         assert!(!reconcile_from_firmware(&mut cfg, Some(ChargeLimit::P100)));
         assert!(cfg.charge_care);
         assert_eq!(cfg.charge_limit, ChargeLimit::P80);
 
-        // External tool switched to 60% -> adopt it
         assert!(reconcile_from_firmware(&mut cfg, Some(ChargeLimit::P60)));
         assert_eq!(cfg.charge_limit, ChargeLimit::P60);
 
-        // In travel mode -> ignore
         cfg.travel_mode = true;
         assert!(!reconcile_from_firmware(&mut cfg, Some(ChargeLimit::P50)));
         assert_eq!(cfg.charge_limit, ChargeLimit::P60);

@@ -265,7 +265,6 @@ unsafe fn handle_raw_input(state: &mut ReaderState, hraw: HRAWINPUT) {
         state.frame.clear();
 
         for slot in &dev.slots {
-            // Check TipSwitch usage in this contact link collection
             let mut usages = [0u16; 8];
             let mut usage_len = usages.len() as u32;
             // SAFETY: Valid preparsed HID descriptor and report slice.

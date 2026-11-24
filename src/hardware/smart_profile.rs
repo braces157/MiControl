@@ -157,7 +157,6 @@ pub fn plan_power_transition(
         return None;
     }
 
-    // Remember current manual brightness for the power source we are leaving.
     if cfg.profile_remember_brightness
         && let Some(b) = current_brightness
     {
@@ -250,11 +249,11 @@ mod tests {
     #[test]
     fn battery_safety_cutoff_only_fires_on_battery_at_or_below_threshold() {
         assert!(!should_cutoff_awake(false, false, Some(15), 20));
-        assert!(!should_cutoff_awake(true, true, Some(15), 20)); // plugged in -> safe
+        assert!(!should_cutoff_awake(true, true, Some(15), 20));
         assert!(!should_cutoff_awake(true, false, Some(21), 20));
         assert!(should_cutoff_awake(true, false, Some(20), 20));
         assert!(should_cutoff_awake(true, false, Some(12), 20));
-        assert!(!should_cutoff_awake(true, false, Some(10), 0)); // disabled
+        assert!(!should_cutoff_awake(true, false, Some(10), 0));
     }
 
     #[test]
@@ -272,21 +271,18 @@ mod tests {
             ..Default::default()
         };
 
-        // Unplug while screen is at 90% -> saves 90% for AC, applies Battery profile (Quiet, 60Hz, 45%)
         let act = plan_power_transition(&mut cfg, true, false, Some(90)).expect("transition");
         assert_eq!(cfg.ac_brightness, Some(90));
         assert_eq!(act.target_mode, Some(PerfMode::Quiet));
         assert_eq!(act.target_hz, Some(60));
         assert_eq!(act.target_brightness, Some(45));
 
-        // Plug back in while screen is at 40% -> saves 40% for Battery, restores AC (Auto, 120Hz, 90%)
         let act2 = plan_power_transition(&mut cfg, false, true, Some(40)).expect("transition");
         assert_eq!(cfg.battery_brightness, Some(40));
         assert_eq!(act2.target_mode, Some(PerfMode::Auto));
         assert_eq!(act2.target_hz, Some(120));
         assert_eq!(act2.target_brightness, Some(90));
 
-        // No-op when disabled or unchanged power state
         assert_eq!(plan_power_transition(&mut cfg, true, true, Some(80)), None);
         cfg.smart_profiles_enabled = false;
         assert_eq!(plan_power_transition(&mut cfg, true, false, Some(80)), None);
@@ -310,14 +306,12 @@ mod tests {
         assert_eq!(preferred_startup_hz(&cfg, true), Some(120));
         assert_eq!(preferred_startup_hz(&cfg, false), Some(60));
 
-        // Smart profiles off -> restores last explicitly chosen mode/Hz, but blocks FullSpeed on battery
         cfg.smart_profiles_enabled = false;
         assert_eq!(preferred_startup_mode(&cfg, false), Some(PerfMode::Turbo));
         assert_eq!(preferred_startup_hz(&cfg, false), Some(100));
         cfg.last_perf_mode = Some(PerfMode::FullSpeed);
         assert_eq!(preferred_startup_mode(&cfg, false), None);
 
-        // Rejected mode on AC is skipped
         cfg.record_rejected(PerfMode::FullSpeed, true);
         assert_eq!(preferred_startup_mode(&cfg, true), None);
     }

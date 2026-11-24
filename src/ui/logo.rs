@@ -215,9 +215,7 @@ mod tests {
     fn renders_nonempty_squircle_with_transparent_corners() {
         let px = render_premul_argb(32, 0xFF6900, 0xFFA94D, false, true);
         assert_eq!(px.len(), 32 * 32);
-        // Top-left corner outside squircle is transparent
         assert_eq!(px[0] >> 24, 0);
-        // Center of icon is opaque
         assert_eq!(px[16 * 32 + 16] >> 24, 255);
     }
 

@@ -138,9 +138,7 @@ mod tests {
     fn detects_left_and_right_vertical_slides() {
         let mut t = EdgeGestureTracker::new(0.10, 0.05);
 
-        // Start on left edge at y=0.50
         assert_eq!(t.update(&[TouchContact { id: 1, x: 0.04, y: 0.50 }]), None);
-        // Move up by 0.12 -> +2 steps
         assert_eq!(
             t.update(&[TouchContact { id: 1, x: 0.05, y: 0.38 }]),
             Some(EdgeSlideDelta {
@@ -148,10 +146,8 @@ mod tests {
                 steps: 2
             })
         );
-        // Release
         assert_eq!(t.update(&[]), None);
 
-        // Start on right edge and swipe down
         assert_eq!(t.update(&[TouchContact { id: 2, x: 0.95, y: 0.20 }]), None);
         assert_eq!(
             t.update(&[TouchContact { id: 2, x: 0.94, y: 0.36 }]),
@@ -166,12 +162,10 @@ mod tests {
     fn ignores_center_drift_and_multifinger_scroll() {
         let mut t = EdgeGestureTracker::new(0.10, 0.05);
 
-        // Finger starts in center then drifts into left strip -> must not trigger
         assert_eq!(t.update(&[TouchContact { id: 1, x: 0.50, y: 0.50 }]), None);
         assert_eq!(t.update(&[TouchContact { id: 1, x: 0.02, y: 0.20 }]), None);
         assert_eq!(t.update(&[]), None);
 
-        // Second finger drops mid-slide -> cancels until full release
         assert_eq!(t.update(&[TouchContact { id: 1, x: 0.02, y: 0.60 }]), None);
         assert_eq!(
             t.update(&[

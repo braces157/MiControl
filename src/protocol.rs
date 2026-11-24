@@ -559,19 +559,16 @@ mod tests {
     fn mi_gesture_click_double_and_hold() {
         let mut g = MiGestureState::new(400, 300);
 
-        // Single click
         assert_eq!(g.on_down(1000), Some(400));
         assert_eq!(g.on_up(1080), (None, Some(300)));
         assert_eq!(g.on_double_timeout(1390), Some(MiGesture::Click));
 
-        // Double click
         g.on_down(2000);
         assert_eq!(g.on_up(2050), (None, Some(300)));
         g.on_down(2150);
         assert_eq!(g.on_up(2200), (Some(MiGesture::DoubleClick), None));
         assert_eq!(g.on_double_timeout(2600), None);
 
-        // Hold cancels click
         g.on_down(3000);
         assert_eq!(g.on_hold_timeout(3400), Some(MiGesture::Hold));
         assert_eq!(g.on_up(3600), (None, None));
